@@ -1,13 +1,12 @@
-// Getting the method here
-const connectToMongse = require('./db');
-
-connectToMongse();
+const connectToMongo = require('./db');
 const express = require('express')
+
+connectToMongo();
 const app = express()
 const port = 3000
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('Hello Ack Wolver!')
 })
 
 app.listen(port, () => {
