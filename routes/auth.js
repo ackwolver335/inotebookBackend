@@ -2,8 +2,6 @@ const express = require('express');
 const User = require('../models/User');
 const router = express.Router();
 const { query, validationResult } = require('express-validator');
-const { ValidationHalt } = require('express-validator/lib/base');
-const app = express();
 
 
 // Creating a User using: POST "/api/auth". Doesn't requires Auth
@@ -28,8 +26,8 @@ router.post('/',[
     user.save();                                    // saving the user here
     
     // applying the condition here
-    if(!(result.isEmpty())){
-        return res.send(`Response ,${req.query.name}!`);
+    if(result.isEmpty()){
+        return res.send(`Response ,${req.query}!`);
     }
 
     res.send({ errors : result.array()});
