@@ -3,13 +3,13 @@ const User = require('../models/User');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
-
 router.post('/',[
 
     // Applying different validation checks here,
-    body('username').isLength({ min : 8 }).withMessage('Username must contains atleast 8 characters !'),
-    body('email').isEmail().withMessage('Invalid Email Format'),
-    body('password').isStrongPassword().isLength({ min : 8}).withMessage('Password must contain Lowercase, Uppercase, Numerical Values & Symbols in it !')
+    body('name','User must provide his/her name here for further Validations !').notEmpty(),
+    body('username','Please enter a valid username here regarding Account Creation !').isLength({ min : 8 }),
+    body('email','Please enter a valid email here !').isEmail(),
+    body('password','You must enter a strong password regarding your data security !').isStrongPassword().isLength({ min : 8})
 
 ],async (req,res) => {
        
@@ -21,20 +21,18 @@ router.post('/',[
         return res.status(400).json({result : result.array()});
     }
 
-    // Applying a try catch here in order to maintain the error handling in case of creating a user here
-    try{
-        const user = User(req.body);
-        await user.save();                      // Saving the user's details after a proper confirmation check
-
-        // Proper message towards the developer
-        res.status(200).json({message : "User Created Successfully !",user});
-    } 
-    
-    // Error Checks regarding different kinds of issues before any user gets created
-    catch (error){
-        console.error(error);
-        res.status(500).json({message : "Internal Server Error !"});
-    }
+    // Creating a user here with proper error management
+    User.create({
+        name : req.body.name,
+        username : req.body.username,
+        email : req.body.email,
+        password : req.body.password
+    }).then(user => res.json(user)).catch(error => {
+        console.error(error)
+        res.json({warning : "Please enter proper details otherwise your wouldn't be able to use the services !",
+            error_Message : error.message
+        });
+    })
 })
 
 module.exports = router;
