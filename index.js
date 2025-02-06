@@ -3,7 +3,7 @@ const express = require('express')
 
 connectToMongo();
 const app = express()
-const port = 3000
+const port = 5000             // changing from 3000 to 5000 cause at port 3000 our reactjs server will run
 
 app.use(express.json());      // middleware to hit for getting the response here
 
