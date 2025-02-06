@@ -10,6 +10,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = "WebTokenStringSecure";              // Secure Web Token key required to sign web token
 
+// Getting the middleware function to be loaded here
+const fetchuser = require('../middleware/fetchUser')
+
+// ROUTE 1 : For Creating a new user or Sign Up Options from the Server Side
 router.post('/createuser',[                             // changing the endpoint to createuser
 
     // Applying different validation checks here,
@@ -71,7 +75,7 @@ router.post('/createuser',[                             // changing the endpoint
     }
 })
 
-// Creating another block of code for login of the user
+// ROUTE 2 : For User's Login credentials & working on the site
 router.post('/login',[                                  // changing the endpoint to createuser
 
     // applying the main validation check only
@@ -112,7 +116,7 @@ router.post('/login',[                                  // changing the endpoint
         // we'll create a payload for it
         const data = {
             user : {
-                id : User.id
+                id : user.id
             }
         }
 
@@ -127,6 +131,30 @@ router.post('/login',[                                  // changing the endpoint
         res.status(500).send("Some Error occured from the server side !");
     }
 
+})
+
+// ROUTE 3 : Getting the User's details if the user has logged in to the site : Login Required here
+router.post('/getuser',fetchuser, async (req,res) => {
+
+
+    // try catch block for prevention of the errors
+    try {
+        
+        // getting the user id here with the help of middleware
+        const userId = req.user.id;
+
+        // Selecting all the fields except the password
+        const user = await User.findById(userId).select("-password");
+
+        // sending a response here from the server side
+        res.send(user);
+
+    } catch (error) {
+        console.error(error.message);   // getting the error to be simply shown
+
+        // returning a particular response error from the server side
+        res.status(500).send("Some Error occured from the server side !");
+    }
 })
 
 module.exports = router
