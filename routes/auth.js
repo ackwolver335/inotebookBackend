@@ -55,7 +55,7 @@ router.post('/createuser',[                             // changing the endpoint
 
         const data = {                      // creating a data on the basis of which the user returns to the site
             user : {
-                id : User.id                // user's unique id available in the database
+                id : user.id                // user's unique id available in the database
             }
         }
 
@@ -71,4 +71,62 @@ router.post('/createuser',[                             // changing the endpoint
     }
 })
 
-module.exports = router;
+// Creating another block of code for login of the user
+router.post('/login',[                                  // changing the endpoint to createuser
+
+    // applying the main validation check only
+    body('email','Please enter a valid email here !').isEmail(),
+    body('password','Password can not be blank !').exists()
+
+],async (req,res) => {
+
+    // Checking if there is any kind of errors here regarding the incoming data
+    const result = validationResult(req);
+    
+    // applying the condition here
+    if(!result.isEmpty()){                              // Checking if there is any kind of errors
+        return res.status(400).json({result : result.array()});
+    }
+
+    // Getting the emails & password out of the body using destructuring
+    const {email,password} = req.body;
+    try {                                           // trying to take the user inside the site
+
+        // pulling the user through its email here
+        let user = await User.findOne({email});
+
+        // situation if the user don't exists
+        if(!user){
+            res.status(400).json({error : "Try login with correct Credentials !"});
+        }
+
+        // comparing the password that is been given by the user
+        const userPassComparison = await bcrypt.compare(password,user.password);
+
+        // condition in case the entered password is incorrect or don't matches
+        if(!userPassComparison){
+            res.status(400).json({error : "Try login with correct Credentials !"});
+        }
+
+        // Incase all the credentials entered by the user is correct
+        // we'll create a payload for it
+        const data = {
+            user : {
+                id : User.id
+            }
+        }
+
+        // Creating a signature here for the user's identity
+        const jwtToken = jwt.sign(data,JWT_SECRET);
+        res.json({jwtToken});
+
+    } catch (error) {
+        console.error(error.message);   // getting the error to be simply shown
+
+        // returning a particular response error from the server side
+        res.status(500).send("Some Error occured from the server side !");
+    }
+
+})
+
+module.exports = router
