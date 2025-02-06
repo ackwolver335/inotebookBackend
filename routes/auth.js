@@ -3,6 +3,13 @@ const User = require('../models/User');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
+// adding a package for hashing the password in case of saving it from threat or attacks
+const bcrypt = require('bcryptjs');
+
+// regarding the usage of webtoken we are using the jwt package here
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = "WebTokenStringSecure";              // Secure Web Token key required to sign web token
+
 router.post('/createuser',[                             // changing the endpoint to createuser
 
     // Applying different validation checks here,
@@ -32,16 +39,30 @@ router.post('/createuser',[                             // changing the endpoint
 
         }
 
+        // Creating a salt here for adding it to the main password
+        const salt = bcrypt.genSaltSync(10);
+
+        // Creating a variable for having a secure password before passing it to the main database
+        let securePass = await bcrypt.hash(req.body.password,salt);
+
         // Creating a user here with proper error management if it not already exists
         user = await User.create({
             name : req.body.name,
             username : req.body.username,
             email : req.body.email,
-            password : req.body.password
+            password : securePass
         })
 
-        // Returning the response of the user if created
-        res.json(user);
+        const data = {                      // creating a data on the basis of which the user returns to the site
+            user : {
+                id : User.id                // user's unique id available in the database
+            }
+        }
+
+        // Creating a signature here for the user's identity
+        const jwtToken = jwt.sign(data,JWT_SECRET);
+        res.json({jwtToken});
+
     } catch (error){                    // if any kind of error occurs it would directly gets handled
         console.error(error.message);   // getting the error to be simply shown
 
