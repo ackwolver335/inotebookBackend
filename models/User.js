@@ -6,10 +6,9 @@ const userSchema = new Schema({
         type : String,
         required : true
     },
-    username: {
+    username: {                 // unique property removed only be applied to the user name
         type : String,
-        required : true,
-        unique : true
+        required : true
     },
     email:{
         type : String,
