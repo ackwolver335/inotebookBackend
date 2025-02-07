@@ -129,4 +129,40 @@ router.put('/updatenote/:id', fetchuser,
 
 })
 
+// ROUTE 4 : Deleting an existing note here. Login Required {will get automatically using middleware} [Delete Request]
+router.delete('/deletenote/:id', fetchuser,
+
+    async (req,res) => {
+
+        // using try catch here to avoid incoming errors & stuck of backend application
+        try {
+
+            // finding that particular note to be deleted & then to delete it
+            let note = await Notes.findById(req.params.id);
+            if(!note){                                                  // Case 1 : in which userid not found of the note
+                return res.status(404).send("Not found !");
+            }
+
+            // Case 2 : It will allow the deletion only in case the user is the owner of the note
+            if(note.user.toString() !== req.user.id){
+                return res.status(401).send("Not Allowed !");
+            }
+
+            // If the program reaches till here it means that the note exists
+            // Going over to the user's note that it wants to delete
+            note = await Notes.findByIdAndDelete(req.params.id);
+            
+            // sending the note as the response
+            res.json({"Success" : "The Note has been successfully deleted !",note : note});            
+
+        } catch (error){                    // if any kind of error occurs it would directly gets handled
+            console.error(error.message);   // getting the error to be simply shown
+    
+            // returning a particular response error from the server side
+            res.status(500).send("Some Error occured from the server side !");
+        }
+
+    }
+)
+
 module.exports = router;
