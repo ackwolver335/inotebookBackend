@@ -73,4 +73,60 @@ router.post('/addnotes', fetchuser,[                             // changing the
 
 })
 
+// ROUTE 3 : Updating an existing notes : Login Required {would get automatically with middleware} [Put Request]
+router.put('/updatenote/:id', fetchuser,
+    
+    // Asynchronous method here for awaiting at a particular situation
+    async (req,res) => {
+    
+        // using the try catch block not in order to get stucked with some errors
+        try{
+
+            // using destructuring for retrieving data regarding updation in the notes
+            const {title,description,tag} = req.body;
+
+            // creating a newNote object regarding final object
+            const newNote = {};
+
+            // adding data based on different conditions
+            if(title){
+                newNote.title = title;                                  // replacing the content of the title
+            }
+
+            if(description){
+                newNote.description = description;                      // replacing the content of the description
+            }
+
+            if(tag){
+                newNote.tag = tag;                                      // replacing the content of the tag
+            }
+
+            // finding that particular note to be updated & then to update it
+            let note = await Notes.findById(req.params.id);
+            if(!note){                                                  // Case 1 : in which userid not found of the note
+                return res.status(404).send("Not found !");
+            }
+
+            // Case 2 : If a user is trying to access another person's note
+            if(note.user.toString() !== req.user.id){
+                return res.status(401).send("Not Allowed !");
+            }
+
+            // If the program reaches till here it means that the note exists
+            // Going over to the user's note that it wants to access
+            note = await Notes.findByIdAndUpdate(req.params.id,{$set : newNote},{new : true});          // here [new : true] determines the usage of incoming note's updation for the second time
+            
+            // sending the note as the response
+            res.json({note});
+
+
+        } catch (error){                    // if any kind of error occurs it would directly gets handled
+            console.error(error.message);   // getting the error to be simply shown
+    
+            // returning a particular response error from the server side
+            res.status(500).send("Some Error occured from the server side !");
+        }
+
+})
+
 module.exports = router;
