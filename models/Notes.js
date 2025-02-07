@@ -3,6 +3,13 @@ const { Schema } = mongoose;
 
 
 const notesSchema = new Schema({
+
+    // adding a foriegn key here for getting the user & its notes linked
+    user : {
+        type : mongoose.Schema.Types.ObjectId,                                  // getting the user id with this
+        ref : 'user'
+    },
+
     title:{
         type : String,
         required : true
