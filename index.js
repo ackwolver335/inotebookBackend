@@ -1,10 +1,12 @@
 const connectToMongo = require('./db');
 const express = require('express')
+var cors = require('cors')
 
 connectToMongo();
-const app = express()
+const app = express();
 const port = 5000             // changing from 3000 to 5000 cause at port 3000 our reactjs server will run
 
+app.use(cors())
 app.use(express.json());      // middleware to hit for getting the response here
 
 // available routes
