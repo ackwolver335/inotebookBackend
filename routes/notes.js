@@ -36,7 +36,7 @@ router.post('/addnotes', fetchuser,[                             // changing the
 
     // Applying different validation checks here,
     body('title','Title must be valid !').notEmpty().isLength({ min : 5}),
-    body('description','Your description must be within 15 character at minimum !').isLength({ min : 15 })
+    body('description','Your description must be within 15 character at minimum !').isLength({ min : 10 })
 
 ],
     
