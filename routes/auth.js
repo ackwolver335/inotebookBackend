@@ -84,6 +84,9 @@ router.post('/login',[                                  // changing the endpoint
 
 ],async (req,res) => {
 
+    // defining a variable for checking if we got successfully loggined
+    let success = false;
+
     // Checking if there is any kind of errors here regarding the incoming data
     const result = validationResult(req);
     
@@ -109,7 +112,8 @@ router.post('/login',[                                  // changing the endpoint
 
         // condition in case the entered password is incorrect or don't matches
         if(!userPassComparison){
-            res.status(400).json({error : "Try login with correct Credentials !"});
+            success = false;
+            res.status(400).json({success, error : "Try login with correct Credentials !"});
         }
 
         // Incase all the credentials entered by the user is correct
@@ -122,7 +126,8 @@ router.post('/login',[                                  // changing the endpoint
 
         // Creating a signature here for the user's identity
         const jwtToken = jwt.sign(data,JWT_SECRET);
-        res.json({jwtToken});
+        success = true;
+        res.json({success, jwtToken});
 
     } catch (error) {
         console.error(error.message);   // getting the error to be simply shown
