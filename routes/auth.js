@@ -23,6 +23,9 @@ router.post('/createuser',[                             // changing the endpoint
     body('password','You must enter a strong password regarding your data security !').isStrongPassword().isLength({ min : 8})
 
 ],async (req,res) => {
+
+    // defining a variable for checking if we got successfully loggined
+    let success = false;
        
     // Checking if there is any kind of errors here regarding the incoming data
     const result = validationResult(req);
@@ -39,7 +42,7 @@ router.post('/createuser',[                             // changing the endpoint
         if(user){
 
             // returning a bad request if the user already exists here
-            return res.status(400).json({error : "Warning : A user with this email already exists !"});
+            return res.status(400).json({success, error : "Warning : A user with this email already exists !"});
 
         }
 
@@ -65,7 +68,10 @@ router.post('/createuser',[                             // changing the endpoint
 
         // Creating a signature here for the user's identity
         const jwtToken = jwt.sign(data,JWT_SECRET);
-        res.json({jwtToken});
+
+        // if the user got his/her account successfully created
+        success = true;
+        res.json({success,jwtToken});
 
     } catch (error){                    // if any kind of error occurs it would directly gets handled
         console.error(error.message);   // getting the error to be simply shown
