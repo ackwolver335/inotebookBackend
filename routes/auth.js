@@ -77,7 +77,7 @@ router.post('/createuser',[                             // changing the endpoint
         console.error(error.message);   // getting the error to be simply shown
 
         // returning a particular response error from the server side
-        res.status(500).send("Some Error occured from the server side !");
+        return res.status(500).send("Some Error occured from the server side !");
     }
 })
 
@@ -110,7 +110,7 @@ router.post('/login',[                                  // changing the endpoint
 
         // situation if the user don't exists
         if(!user){
-            res.status(400).json({error : "Try login with correct Credentials !"});
+            return res.status(400).json({error : "Try login with correct Credentials !"});
         }
 
         // comparing the password that is been given by the user
@@ -118,8 +118,7 @@ router.post('/login',[                                  // changing the endpoint
 
         // condition in case the entered password is incorrect or don't matches
         if(!userPassComparison){
-            success = false;
-            res.status(400).json({success, error : "Try login with correct Credentials !"});
+            return res.status(400).json({success, error : "Try login with correct Credentials !"});
         }
 
         // Incase all the credentials entered by the user is correct
@@ -139,7 +138,7 @@ router.post('/login',[                                  // changing the endpoint
         console.error(error.message);   // getting the error to be simply shown
 
         // returning a particular response error from the server side
-        res.status(500).send("Some Error occured from the server side !");
+        return res.status(500).send("Some Error occured from the server side !");
     }
 
 })
