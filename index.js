@@ -1,10 +1,11 @@
+// index.js
+
 require('dotenv').config();
 const connectToMongo = require('./db');
 const express = require('express');
-var cors = require('cors');
+const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -14,20 +15,13 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
 
-// Start the server after MongoDB connection
-const startServer = async () => {
-  try {
-    await connectToMongo();  // Connect to MongoDB
-    console.log("Connected to MongoDB successfully!");
-
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-
-  } catch (err) {
+// Connect to MongoDB once
+connectToMongo()
+  .then(() => console.log("Connected to MongoDB successfully!"))
+  .catch(err => {
     console.error("Error connecting to MongoDB:", err);
-    process.exit(1);  // Only exit if connection fails
-  }
-};
+    process.exit(1);  // Fail hard if DB doesn't connect
+  });
 
-startServer();
+// Export the Express app (no app.listen here!)
+module.exports = app;
