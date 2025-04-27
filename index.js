@@ -24,6 +24,9 @@ const startServer = async () => {
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
+
+    // Ensure the process exits after a clean start
+    process.exit(0);  // Force process exit after starting the server
   } catch (err) {
     console.error("Error connecting to MongoDB:", err);
     process.exit(1);  // Exit the process if MongoDB connection fails
