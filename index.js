@@ -6,7 +6,6 @@ var cors = require('cors');
 
 connectToMongo();
 const app = express();
-const port = process.env.PORT || 5000;   // 🟰 dynamic port handling
 
 app.use(cors());
 app.use(express.json());
@@ -14,12 +13,3 @@ app.use(express.json());
 // available routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
-
-app.get('/', (req, res) => {
-  res.send('Welcome to the iNotebook Backend!');
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`iNotebook app listening at http://localhost:${port}`);
-});
