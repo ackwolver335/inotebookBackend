@@ -1,9 +1,9 @@
 // index.js
 
 require('dotenv').config();
-const connectToMongo = require('./db');
 const express = require('express');
 const cors = require('cors');
+const connectToMongo = require('./db');
 
 const app = express();
 
@@ -11,17 +11,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// MongoDB connection middleware (connect lazily)
+app.use(async (req, res, next) => {
+  try {
+    await connectToMongo();
+    next();
+  } catch (err) {
+    console.error('Failed to connect to MongoDB', err);
+    res.status(500).send('Database connection failed');
+  }
+});
+
 // Available routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
 
-// Connect to MongoDB once
-connectToMongo()
-  .then(() => console.log("Connected to MongoDB successfully!"))
-  .catch(err => {
-    console.error("Error connecting to MongoDB:", err);
-    process.exit(1);  // Fail hard if DB doesn't connect
-  });
-
-// Export the Express app (no app.listen here!)
+// Export app for Vercel
 module.exports = app;
