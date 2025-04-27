@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "vercel-build": "./entrypoints.sh",
+    "vercel-build": "sh entrypoints.sh",
     "build": "npm run vercel-build",
     "start": "node server.js"
   },
