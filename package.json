@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "vercel-build": "./entrypoints.sh",
+    "build": "npm run vercel-build",
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
