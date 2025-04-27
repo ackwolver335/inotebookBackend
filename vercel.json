@@ -3,7 +3,7 @@
       { "src": "package.json", "use": "@vercel/node" }
     ],
     "routes": [
-      { "src": "/(.*)", "dest": "/server.js" }
+      { "src": "/(.*)", "dest": "/index.js" }
     ]
   }
   
