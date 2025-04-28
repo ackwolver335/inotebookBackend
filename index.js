@@ -4,6 +4,7 @@ require('dotenv').config();
 const connectToMongo = require('./db');
 const express = require('express');
 const cors = require('cors');
+const port = process.env.PORT || 4000 
 
 const app = express();
 
@@ -14,6 +15,14 @@ app.use(express.json());
 // Available routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
+
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
 
 // Connect to MongoDB once
 connectToMongo()
